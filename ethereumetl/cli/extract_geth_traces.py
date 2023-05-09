@@ -43,7 +43,7 @@ def extract_geth_traces(input, batch_size, output, max_workers):
         if input.endswith('.json'):
             traces_iterable = (json.loads(line) for line in geth_traces_file)
         else:
-            traces_iterable = (trace for trace in csv.DictReader(geth_traces_file))
+            traces_iterable = iter(csv.DictReader(geth_traces_file))
         job = ExtractGethTracesJob(
             traces_iterable=traces_iterable,
             batch_size=batch_size,

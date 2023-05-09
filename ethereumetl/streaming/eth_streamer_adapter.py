@@ -69,29 +69,29 @@ class EthStreamerAdapter:
             tokens = self._extract_tokens(contracts)
 
         enriched_blocks = blocks \
-            if EntityType.BLOCK in self.entity_types else []
+                if EntityType.BLOCK in self.entity_types else []
         enriched_transactions = enrich_transactions(transactions, receipts) \
-            if EntityType.TRANSACTION in self.entity_types else []
+                if EntityType.TRANSACTION in self.entity_types else []
         enriched_logs = enrich_logs(blocks, logs) \
-            if EntityType.LOG in self.entity_types else []
+                if EntityType.LOG in self.entity_types else []
         enriched_token_transfers = enrich_token_transfers(blocks, token_transfers) \
-            if EntityType.TOKEN_TRANSFER in self.entity_types else []
+                if EntityType.TOKEN_TRANSFER in self.entity_types else []
         enriched_traces = enrich_traces(blocks, traces) \
-            if EntityType.TRACE in self.entity_types else []
+                if EntityType.TRACE in self.entity_types else []
         enriched_contracts = enrich_contracts(blocks, contracts) \
-            if EntityType.CONTRACT in self.entity_types else []
+                if EntityType.CONTRACT in self.entity_types else []
         enriched_tokens = enrich_tokens(blocks, tokens) \
-            if EntityType.TOKEN in self.entity_types else []
+                if EntityType.TOKEN in self.entity_types else []
 
-        logging.info('Exporting with ' + type(self.item_exporter).__name__)
+        logging.info(f'Exporting with {type(self.item_exporter).__name__}')
 
         all_items = enriched_blocks + \
-            enriched_transactions + \
-            enriched_logs + \
-            enriched_token_transfers + \
-            enriched_traces + \
-            enriched_contracts + \
-            enriched_tokens
+                enriched_transactions + \
+                enriched_logs + \
+                enriched_token_transfers + \
+                enriched_traces + \
+                enriched_contracts + \
+                enriched_tokens
 
         self.calculate_item_ids(all_items)
 
@@ -138,8 +138,7 @@ class EthStreamerAdapter:
             max_workers=self.max_workers,
             item_exporter=exporter)
         job.run()
-        token_transfers = exporter.get_items('token_transfer')
-        return token_transfers
+        return exporter.get_items('token_transfer')
 
     def _export_traces(self, start_block, end_block):
         exporter = InMemoryItemExporter(item_types=['trace'])
@@ -152,8 +151,7 @@ class EthStreamerAdapter:
             item_exporter=exporter
         )
         job.run()
-        traces = exporter.get_items('trace')
-        return traces
+        return exporter.get_items('trace')
 
     def _export_contracts(self, traces):
         exporter = InMemoryItemExporter(item_types=['contract'])
@@ -164,8 +162,7 @@ class EthStreamerAdapter:
             item_exporter=exporter
         )
         job.run()
-        contracts = exporter.get_items('contract')
-        return contracts
+        return exporter.get_items('contract')
 
     def _extract_tokens(self, contracts):
         exporter = InMemoryItemExporter(item_types=['token'])
@@ -176,8 +173,7 @@ class EthStreamerAdapter:
             item_exporter=exporter
         )
         job.run()
-        tokens = exporter.get_items('token')
-        return tokens
+        return exporter.get_items('token')
 
     def _should_export(self, entity_type):
         if entity_type == EntityType.BLOCK:
@@ -204,7 +200,7 @@ class EthStreamerAdapter:
         if entity_type == EntityType.TOKEN:
             return EntityType.TOKEN in self.entity_types
 
-        raise ValueError('Unexpected entity type ' + entity_type)
+        raise ValueError(f'Unexpected entity type {entity_type}')
 
     def calculate_item_ids(self, items):
         for item in items:

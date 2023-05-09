@@ -37,8 +37,9 @@ class EthTokenTransferExtractor(object):
 
         topics = receipt_log.topics
         if topics is None or len(topics) < 1:
-            logger.warning("Topics are empty in log {} of transaction {}".format(receipt_log.log_index,
-                                                                                 receipt_log.transaction_hash))
+            logger.warning(
+                f"Topics are empty in log {receipt_log.log_index} of transaction {receipt_log.transaction_hash}"
+            )
             return None
 
         if topics[0] == TRANSFER_EVENT_TOPIC:
@@ -46,8 +47,9 @@ class EthTokenTransferExtractor(object):
             topics_with_data = topics + split_to_words(receipt_log.data)
             # if the number of topics and fields in data part != 4, then it's a weird event
             if len(topics_with_data) != 4:
-                logger.warning("The number of topics and data parts is not equal to 4 in log {} of transaction {}"
-                               .format(receipt_log.log_index, receipt_log.transaction_hash))
+                logger.warning(
+                    f"The number of topics and data parts is not equal to 4 in log {receipt_log.log_index} of transaction {receipt_log.transaction_hash}"
+                )
                 return None
 
             token_transfer = EthTokenTransfer()
@@ -67,8 +69,7 @@ def split_to_words(data):
     if data and len(data) > 2:
         data_without_0x = data[2:]
         words = list(chunk_string(data_without_0x, 64))
-        words_with_0x = list(map(lambda word: '0x' + word, words))
-        return words_with_0x
+        return list(map(lambda word: f'0x{word}', words))
     return []
 
 
@@ -76,6 +77,6 @@ def word_to_address(param):
     if param is None:
         return None
     elif len(param) >= 40:
-        return to_normalized_address('0x' + param[-40:])
+        return to_normalized_address(f'0x{param[-40:]}')
     else:
         return to_normalized_address(param)

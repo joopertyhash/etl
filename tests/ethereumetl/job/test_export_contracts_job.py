@@ -46,7 +46,7 @@ CONTRACT_ADDRESSES_UNDER_TEST = ['0x06012c8cf97bead5deae237070f9587f8e7a266d']
 ])
 def test_export_contracts_job(tmpdir, batch_size, contract_addresses, output_format, resource_group,
                               web3_provider_type):
-    contracts_output_file = str(tmpdir.join('actual_contracts.' + output_format))
+    contracts_output_file = str(tmpdir.join(f'actual_contracts.{output_format}'))
 
     job = ExportContractsJob(
         contract_addresses_iterable=contract_addresses,
@@ -62,5 +62,6 @@ def test_export_contracts_job(tmpdir, batch_size, contract_addresses, output_for
     print('=====================')
     print(read_file(contracts_output_file))
     compare_lines_ignore_order(
-        read_resource(resource_group, 'expected_contracts.' + output_format), read_file(contracts_output_file)
+        read_resource(resource_group, f'expected_contracts.{output_format}'),
+        read_file(contracts_output_file),
     )

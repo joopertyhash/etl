@@ -33,7 +33,7 @@ def hex_to_dec(hex_string):
     try:
         return int(hex_string, 16)
     except ValueError:
-        print("Not a hex string %s" % hex_string)
+        print(f"Not a hex string {hex_string}")
         return hex_string
 
 
@@ -74,9 +74,9 @@ def rpc_response_batch_to_results(response):
 def rpc_response_to_result(response):
     result = response.get('result')
     if result is None:
-        error_message = 'result is None in response {}.'.format(response)
+        error_message = f'result is None in response {response}.'
         if response.get('error') is None:
-            error_message = error_message + ' Make sure Ethereum node is synced.'
+            error_message += ' Make sure Ethereum node is synced.'
             # When nodes are behind a load balancer it makes sense to retry the request in hopes it will go to other,
             # synced node
             raise RetriableValueError(error_message)
@@ -90,14 +90,11 @@ def is_retriable_error(error_code):
     if error_code is None:
         return False
 
-    if not isinstance(error_code, int):
-        return False
-
-    # https://www.jsonrpc.org/specification#error_object
-    if error_code == -32603 or (-32000 >= error_code >= -32099):
-        return True
-
-    return False
+    return (
+        error_code == -32603 or -32000 >= error_code >= -32099
+        if isinstance(error_code, int)
+        else False
+    )
 
 
 def split_to_batches(start_incl, end_incl, batch_size):

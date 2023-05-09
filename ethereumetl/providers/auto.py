@@ -38,12 +38,12 @@ def get_provider_from_uri(uri_string, timeout=DEFAULT_TIMEOUT, batch=False):
             return BatchIPCProvider(uri.path, timeout=timeout)
         else:
             return IPCProvider(uri.path, timeout=timeout)
-    elif uri.scheme == 'http' or uri.scheme == 'https':
+    elif uri.scheme in ['http', 'https']:
         request_kwargs = {'timeout': timeout}
         if batch:
             return BatchHTTPProvider(uri_string, request_kwargs=request_kwargs)
         else:
             return HTTPProvider(uri_string, request_kwargs=request_kwargs)
     else:
-        raise ValueError('Unknown uri scheme {}'.format(uri_string))
+        raise ValueError(f'Unknown uri scheme {uri_string}')
 

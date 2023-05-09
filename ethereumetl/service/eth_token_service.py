@@ -69,12 +69,11 @@ class EthTokenService(object):
 
 def call_contract_function(func, ignore_errors, default_value=None):
     try:
-        result = func.call()
-        return result
+        return func.call()
     except Exception as ex:
-        if type(ex) in ignore_errors:
-            logger.exception('An exception occurred in function {} of contract {}. '.format(func.fn_name, func.address)
-                             + 'This exception can be safely ignored.')
-            return default_value
-        else:
+        if type(ex) not in ignore_errors:
             raise ex
+        logger.exception(
+            f'An exception occurred in function {func.fn_name} of contract {func.address}. This exception can be safely ignored.'
+        )
+        return default_value
