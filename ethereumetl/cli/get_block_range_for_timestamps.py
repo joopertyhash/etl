@@ -52,4 +52,4 @@ def get_block_range_for_timestamps(provider_uri, start_timestamp, end_timestamp,
     start_block, end_block = eth_service.get_block_range_for_timestamps(start_timestamp, end_timestamp)
 
     with smart_open(output, 'w') as output_file:
-        output_file.write('{},{}\n'.format(start_block, end_block))
+        output_file.write(f'{start_block},{end_block}\n')

@@ -43,24 +43,18 @@ def get_file_handle(filename, mode='w', binary=False, create_parent_dirs=True):
         dirname = os.path.dirname(filename)
         pathlib.Path(dirname).mkdir(parents=True, exist_ok=True)
     full_mode = mode + ('b' if binary else '')
-    is_file = filename and filename != '-'
-    if is_file:
-        fh = open(filename, full_mode)
+    if is_file := filename and filename != '-':
+        return open(filename, full_mode)
     elif filename == '-':
         fd = sys.stdout.fileno() if mode == 'w' else sys.stdin.fileno()
-        fh = os.fdopen(fd, full_mode)
+        return os.fdopen(fd, full_mode)
     else:
-        fh = NoopFile()
-    return fh
+        return NoopFile()
 
 
 def close_silently(file_handle):
-    if file_handle is None:
-        pass
-    try:
+    with contextlib.suppress(OSError):
         file_handle.close()
-    except OSError:
-        pass
 
 
 class NoopFile:

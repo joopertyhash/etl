@@ -26,11 +26,7 @@ from collections import defaultdict
 def calculate_trace_statuses(traces):
     # set default values
     for trace in traces:
-        if trace.error is not None and len(trace.error) > 0:
-            trace.status = 0
-        else:
-            trace.status = 1
-
+        trace.status = 0 if trace.error is not None and len(trace.error) > 0 else 1
     # group by transaction
     grouped_transaction_traces = defaultdict(list)
     for trace in traces:
@@ -55,8 +51,9 @@ def calculate_trace_statuses_for_single_transaction(all_traces):
         if len(trace.trace_address) > 0:
             parent_trace = indexed_traces.get(trace_address_to_str(trace.trace_address[:-1]))
             if parent_trace is None:
-                raise ValueError('A parent trace for trace with trace_address {} in transaction {} is not found'
-                                 .format(trace.trace_address, trace.transaction_hash))
+                raise ValueError(
+                    f'A parent trace for trace with trace_address {trace.trace_address} in transaction {trace.transaction_hash} is not found'
+                )
             if parent_trace.status == 0:
                 trace.status = 0
 

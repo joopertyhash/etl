@@ -89,9 +89,7 @@ def get_partitions(start, end, partition_batch_size, provider_uri):
 
         for batch_start_block in range(start_block, end_block + 1, partition_batch_size):
             batch_end_block = batch_start_block + partition_batch_size - 1
-            if batch_end_block > end_block:
-                batch_end_block = end_block
-
+            batch_end_block = min(batch_end_block, end_block)
             padded_batch_start_block = str(batch_start_block).zfill(8)
             padded_batch_end_block = str(batch_end_block).zfill(8)
             partition_dir = '/start_block={padded_batch_start_block}/end_block={padded_batch_end_block}'.format(

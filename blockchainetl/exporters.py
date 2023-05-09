@@ -54,7 +54,7 @@ class BaseItemExporter(object):
         self.export_empty_fields = options.pop('export_empty_fields', False)
         self.indent = options.pop('indent', None)
         if not dont_fail and options:
-            raise TypeError("Unexpected options: %s" % ', '.join(options.keys()))
+            raise TypeError(f"Unexpected options: {', '.join(options.keys())}")
 
     def export_item(self, item):
         raise NotImplementedError
@@ -76,15 +76,15 @@ class BaseItemExporter(object):
         if include_empty is None:
             include_empty = self.export_empty_fields
         if self.fields_to_export is None:
-            if include_empty and not isinstance(item, dict):
-                field_iter = six.iterkeys(item.fields)
-            else:
-                field_iter = six.iterkeys(item)
+            field_iter = (
+                six.iterkeys(item.fields)
+                if include_empty and not isinstance(item, dict)
+                else six.iterkeys(item)
+            )
+        elif include_empty:
+            field_iter = self.fields_to_export
         else:
-            if include_empty:
-                field_iter = self.fields_to_export
-            else:
-                field_iter = (x for x in self.fields_to_export if x in item)
+            field_iter = (x for x in self.fields_to_export if x in item)
 
         for field_name in field_iter:
             if field_name in item:
@@ -161,7 +161,7 @@ class CsvItemExporter(BaseItemExporter):
 def EncodeDecimal(o):
     if isinstance(o, decimal.Decimal):
         return float(round(o, 8))
-    raise TypeError(repr(o) + " is not JSON serializable")
+    raise TypeError(f"{repr(o)} is not JSON serializable")
 
 class JsonLinesItemExporter(BaseItemExporter):
 

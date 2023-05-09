@@ -46,7 +46,7 @@ def join(left, right, join_fields, left_fields, right_fields):
     right_map = defaultdict(list)
     for item in right: right_map[item[right_join_field]].append(item)
 
-    for key in left_map.keys():
+    for key in left_map:
         for left_item, right_item in itertools.product(left_map[key], right_map[key]):
             result_item = {}
             for src_field, dst_field in left_fields_as_dict.items():
@@ -84,7 +84,7 @@ def enrich_transactions(transactions, receipts):
         ]))
 
     if len(result) != len(transactions):
-        raise ValueError('The number of transactions is wrong ' + str(result))
+        raise ValueError(f'The number of transactions is wrong {result}')
 
     return result
 
@@ -108,7 +108,7 @@ def enrich_logs(blocks, logs):
         ]))
 
     if len(result) != len(logs):
-        raise ValueError('The number of logs is wrong ' + str(result))
+        raise ValueError(f'The number of logs is wrong {result}')
 
     return result
 
@@ -132,7 +132,7 @@ def enrich_token_transfers(blocks, token_transfers):
         ]))
 
     if len(result) != len(token_transfers):
-        raise ValueError('The number of token transfers is wrong ' + str(result))
+        raise ValueError(f'The number of token transfers is wrong {result}')
 
     return result
 
@@ -167,7 +167,7 @@ def enrich_traces(blocks, traces):
         ]))
 
     if len(result) != len(traces):
-        raise ValueError('The number of traces is wrong ' + str(result))
+        raise ValueError(f'The number of traces is wrong {result}')
 
     return result
 
@@ -190,7 +190,7 @@ def enrich_contracts(blocks, contracts):
         ]))
 
     if len(result) != len(contracts):
-        raise ValueError('The number of contracts is wrong ' + str(result))
+        raise ValueError(f'The number of contracts is wrong {result}')
 
     return result
 
@@ -213,6 +213,6 @@ def enrich_tokens(blocks, tokens):
         ]))
 
     if len(result) != len(tokens):
-        raise ValueError('The number of tokens is wrong ' + str(result))
+        raise ValueError(f'The number of tokens is wrong {result}')
 
     return result

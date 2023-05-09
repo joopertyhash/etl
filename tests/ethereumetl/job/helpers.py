@@ -19,5 +19,5 @@ def get_web3_provider(provider_type, read_resource_lambda=None, batch=False):
         else:
             provider = HTTPProvider('https://mainnet.infura.io')
     else:
-        raise ValueError('Provider type {} is unexpected'.format(provider_type))
+        raise ValueError(f'Provider type {provider_type} is unexpected')
     return provider

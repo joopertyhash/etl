@@ -59,18 +59,18 @@ class Streamer:
     def stream(self):
         try:
             if self.pid_file is not None:
-                logging.info('Creating pid file {}'.format(self.pid_file))
+                logging.info(f'Creating pid file {self.pid_file}')
                 write_to_file(self.pid_file, str(os.getpid()))
             self.blockchain_streamer_adapter.open()
             self._do_stream()
         finally:
             self.blockchain_streamer_adapter.close()
             if self.pid_file is not None:
-                logging.info('Deleting pid file {}'.format(self.pid_file))
+                logging.info(f'Deleting pid file {self.pid_file}')
                 delete_file(self.pid_file)
 
     def _do_stream(self):
-        while True and (self.end_block is None or self.last_synced_block < self.end_block):
+        while self.end_block is None or self.last_synced_block < self.end_block:
             synced_blocks = 0
 
             try:
@@ -82,7 +82,7 @@ class Streamer:
                     raise e
 
             if synced_blocks <= 0:
-                logging.info('Nothing to sync. Sleeping for {} seconds...'.format(self.period_seconds))
+                logging.info(f'Nothing to sync. Sleeping for {self.period_seconds} seconds...')
                 time.sleep(self.period_seconds)
 
     def _sync_cycle(self):
@@ -91,12 +91,13 @@ class Streamer:
         target_block = self._calculate_target_block(current_block, self.last_synced_block)
         blocks_to_sync = max(target_block - self.last_synced_block, 0)
 
-        logging.info('Current block {}, target block {}, last synced block {}, blocks to sync {}'.format(
-            current_block, target_block, self.last_synced_block, blocks_to_sync))
+        logging.info(
+            f'Current block {current_block}, target block {target_block}, last synced block {self.last_synced_block}, blocks to sync {blocks_to_sync}'
+        )
 
         if blocks_to_sync != 0:
             self.blockchain_streamer_adapter.export_all(self.last_synced_block + 1, target_block)
-            logging.info('Writing last synced block {}'.format(target_block))
+            logging.info(f'Writing last synced block {target_block}')
             write_last_synced_block(self.last_synced_block_file, target_block)
             self.last_synced_block = target_block
 
@@ -123,9 +124,8 @@ def write_last_synced_block(file, last_synced_block):
 def init_last_synced_block_file(start_block, last_synced_block_file):
     if os.path.isfile(last_synced_block_file):
         raise ValueError(
-            '{} should not exist if --start-block option is specified. '
-            'Either remove the {} file or the --start-block option.'
-                .format(last_synced_block_file, last_synced_block_file))
+            f'{last_synced_block_file} should not exist if --start-block option is specified. Either remove the {last_synced_block_file} file or the --start-block option.'
+        )
     write_last_synced_block(last_synced_block_file, start_block)
 
 

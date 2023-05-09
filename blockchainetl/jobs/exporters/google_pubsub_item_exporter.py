@@ -66,19 +66,18 @@ class GooglePubSubItemExporter:
             topic_path = self.item_type_to_topic_mapping.get(item_type)
             data = json.dumps(item).encode('utf-8')
 
-            message_future = self.publisher.publish(topic_path, data=data, **self.get_message_attributes(item))
-            return message_future
+            return self.publisher.publish(
+                topic_path, data=data, **self.get_message_attributes(item)
+            )
         else:
-            logging.warning('Topic for item type "{}" is not configured.'.format(item_type))
+            logging.warning(f'Topic for item type "{item_type}" is not configured.')
 
     def get_message_attributes(self, item):
-        attributes = {}
-
-        for attr_name in self.message_attributes:
-            if item.get(attr_name) is not None:
-                attributes[attr_name] = item.get(attr_name)
-
-        return attributes
+        return {
+            attr_name: item.get(attr_name)
+            for attr_name in self.message_attributes
+            if item.get(attr_name) is not None
+        }
 
     def close(self):
         pass
